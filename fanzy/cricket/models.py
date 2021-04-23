@@ -1,6 +1,8 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save,post_delete
 from django.dispatch import receiver
+from django.core.exceptions import ValidationError
 
 
 # Create your models here.
@@ -132,3 +134,28 @@ def Players_signal(sender,instance,*args,**kwargs):
     player.save()
 
 # post_save.connect(Players_signal,sender=MatchPlayers)
+class Fanzy_players(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    player1 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player1')
+    player2 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player2')
+    player3 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player3')
+    player4 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player4')
+    player5 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player5')
+    player6 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player6')
+    player7 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player7')
+    player8 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player8')
+    player9 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player9')
+    player10 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player10')
+    player11 = models.ForeignKey(Player,on_delete=models.CASCADE,related_name='player11')
+
+    def clean(self):
+        # finding unique players 
+        
+        l = [self.player1,self.player2,self.player3,self.player4,self.player5,
+                self.player6,self.player7,self.player8,self.player9,self.player10,self.player11]
+        if len(set(l)) != 11:
+            res = [idx for idx, val in enumerate(l) if val in l[:idx]]
+
+            raise ValidationError({f'player{res[0]+1}':'all the players should be unique'})
+    def __str__(self):
+        return self.user
